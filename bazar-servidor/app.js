@@ -30,6 +30,6 @@ app.get("/api/items/:id", (req, res) => {
   res.json(item);
 });
 
-app.listen(3001, () => {
-  console.log("prueba del backend respodiendo");
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
