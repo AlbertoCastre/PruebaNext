@@ -1,13 +1,14 @@
 import Head from "next/head";
 
 export async function getServerSideProps({ params }) {
-  const res = await fetch(
-    `http://localhost:3001/api/items/${params.id}`
-  );
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/items/${params.id}`);
   const item = await res.json();
 
   return { props: { item } };
 }
+
+  return { props: { item } };
+
 
 export default function Detail({ item }) {
   return (
