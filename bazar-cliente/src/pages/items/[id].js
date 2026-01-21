@@ -1,52 +1,48 @@
 import Head from "next/head";
 
 export async function getServerSideProps({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/items/${params.id}`);
-  const item = await res.json();
-
-  return { props: { item } };
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  
+  try {
+    const res = await fetch(`${baseUrl}/api/items/${params.id}`);
+    const item = await res.json();
+    return { props: { item: item || null } };
+  } catch (error) {
+    console.error("Error:", error);
+    return { props: { item: null } };
+  }
 }
 
-  return { props: { item } };
-
-
 export default function Detail({ item }) {
+  if (!item) {
+    return <div className="container my-4">Cargando o producto no encontrado...</div>;
+  }
+
   return (
     <>
       <Head>
         <title>{item.title}</title>
         <meta property="og:title" content={item.title} />
         <meta property="og:description" content={item.description} />
-        <meta property="og:image" content={item.images[0]} />
       </Head>
 
       <div className="container my-4">
         <div className="row align-items-center">
-          {/* Imagen */}
           <div className="col-12 col-md-6 mb-3 text-center">
-            <img
-              src={item.images[0]}
-              className="img-fluid rounded detail-img"
-              alt={item.title}
-            />
+            {item.images && (
+              <img
+                src={item.images[0]}
+                className="img-fluid rounded"
+                alt={item.title}
+              />
+            )}
           </div>
-
-          {/* Detalle */}
           <div className="col-12 col-md-6">
             <h2>{item.title}</h2>
             <p className="text-muted">{item.category}</p>
-
-            <h4 className="text-success mb-3">
-              ${item.price}
-            </h4>
-
-            <h5>Marca: {item.brand}</h5>
-            <p className="mt-3">{item.description}</p>
-            <p>⭐ {item.rating}</p>
-
-            <button className="btn btn-success mt-3">
-              Comprar
-            </button>
+            <h4 className="text-success">${item.price}</h4>
+            <p>{item.description}</p>
+            <button className="btn btn-success">Comprar</button>
           </div>
         </div>
       </div>
